@@ -8,15 +8,24 @@
  * Alternatively use Docker:  docker compose up -d mongo
  */
 import { spawn } from 'node:child_process';
-import { mkdirSync } from 'node:fs';
+import { mkdirSync, existsSync } from 'node:fs';
 import { createRequire } from 'node:module';
+import { fileURLToPath } from 'node:url';
 
 // Resolve the driver through the API workspace (it is a mongoose dependency).
 const { MongoClient } = createRequire(new URL('../apps/api/package.json', import.meta.url))('mongodb');
 
-const bin = process.env.MONGOD_BIN ?? 'mongod';
-const port = Number(process.env.MONGO_PORT ?? 27017);
-const dbPath = new URL('../.data/db', import.meta.url).pathname;
+let defaultBin = 'mongod';
+if (process.platform === 'win32') {
+  const standardWinPath = 'C:\\Program Files\\MongoDB\\Server\\8.0\\bin\\mongod.exe';
+  if (existsSync(standardWinPath)) {
+    defaultBin = standardWinPath;
+  }
+}
+
+const bin = process.env.MONGOD_BIN ?? defaultBin;
+const port = Number(process.env.MONGO_PORT ?? 27018);
+const dbPath = fileURLToPath(new URL('../.data/db', import.meta.url));
 mkdirSync(dbPath, { recursive: true });
 
 const child = spawn(bin, ['--replSet', 'rs0', '--port', String(port), '--dbpath', dbPath, '--bind_ip', '127.0.0.1'], { stdio: 'inherit' });
