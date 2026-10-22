@@ -1,0 +1,19 @@
+/** Registers every Mongoose model (import once at startup and in tests). */
+import './db/base';
+export * from './db/system.models';
+export * from './modules/companies/company.model';
+export * from './modules/users/user.models';
+export * from './modules/roles/role.models';
+export * from './modules/auth/auth.models';
+export * from './modules/projects/project.models';
+export * from './modules/land/land.model';
+export * from './modules/plots/plot.models';
+export * from './modules/crm/crm.models';
+export * from './modules/customers/customer.models';
+export * from './modules/bookings/booking.models';
+export * from './modules/payments/payment.models';
+export * from './modules/accounting/accounting.models';
+export * from './modules/construction/construction.models';
+export * from './modules/documents/document.model';
+export * from './modules/notifications/notification.model';
+export * from './modules/audit/audit.model';
