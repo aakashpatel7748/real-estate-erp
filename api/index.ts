@@ -1,15 +1,16 @@
 import type { IncomingMessage, ServerResponse } from 'node:http';
-import mongoose from 'mongoose';
-import { createApp } from '../apps/api/src/app';
-import { connectDb } from '../apps/api/src/config/db';
 
 let app: any = null;
 
 async function init() {
-  if (mongoose.connection.readyState === 0) {
-    await connectDb();
-  }
   if (!app) {
+    const mongoose = (await import('mongoose')).default;
+    const { connectDb } = await import('../apps/api/src/config/db');
+    const { createApp } = await import('../apps/api/src/app');
+
+    if (mongoose.connection.readyState === 0) {
+      await connectDb();
+    }
     app = createApp();
   }
   return app;
