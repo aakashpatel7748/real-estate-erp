@@ -80,7 +80,9 @@ export function allocateProportionally(total: Paise, weights: readonly number[])
 
 /** Parse a user-entered rupee string ("1,25,000.50") into paise without floats. */
 export function rupeesToPaise(input: string | number): Paise {
-  const s = String(input).replace(/[,\s₹]/g, '').trim();
+  const s = String(input)
+    .replace(/[,\s₹]/g, '')
+    .trim();
   if (!/^-?\d+(\.\d{1,2})?$/.test(s)) throw new RangeError(`Invalid rupee amount: ${input}`);
   const negative = s.startsWith('-');
   const [whole, frac = ''] = s.replace('-', '').split('.');

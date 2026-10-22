@@ -34,9 +34,9 @@ describe('generateSchedule', () => {
   });
 
   it('rejects invalid plans', () => {
-    expect(() => generateSchedule([{ type: 'percent', name: 'A', valueBp: 5_000, due: { kind: 'on_booking' } }], 100, '2026-01-01')).toThrow(
-      ScheduleError,
-    );
+    expect(() =>
+      generateSchedule([{ type: 'percent', name: 'A', valueBp: 5_000, due: { kind: 'on_booking' } }], 100, '2026-01-01'),
+    ).toThrow(ScheduleError);
     expect(() =>
       generateSchedule(
         [

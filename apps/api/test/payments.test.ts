@@ -26,8 +26,11 @@ describe('payments, allocation and receipts', () => {
 
   it('holds overpayments as advance and keeps the books balanced', async () => {
     const { http, b, inv } = await bookedFixture();
-    const p = (await http.post('/payments', { bookingId: b.id, amountPaise: 10_10_000_00, mode: 'rtgs', receivedOn: '2026-04-10' }, key()).expect(201)).body
-      .data;
+    const p = (
+      await http
+        .post('/payments', { bookingId: b.id, amountPaise: 10_10_000_00, mode: 'rtgs', receivedOn: '2026-04-10' }, key())
+        .expect(201)
+    ).body.data;
     expect(p.allocatedPaise).toBe(10_00_000_00);
     expect(p.advancePaise).toBe(10_000_00);
     const ledger = (await http.get(`/customers/${inv.customer.id}/ledger`)).body.data;
@@ -38,14 +41,18 @@ describe('payments, allocation and receipts', () => {
   it('rejects overpayments when company policy says so', async () => {
     const { http, b } = await bookedFixture();
     await http.patch('/company', { settings: { overpaymentPolicy: 'reject' } }).expect(200);
-    const res = await http.post('/payments', { bookingId: b.id, amountPaise: 10_00_000_01, mode: 'cash', receivedOn: '2026-04-10' }, key()).expect(422);
+    const res = await http
+      .post('/payments', { bookingId: b.id, amountPaise: 10_00_000_01, mode: 'cash', receivedOn: '2026-04-10' }, key())
+      .expect(422);
     expect(res.body.error.message).toMatch(/exceeds/);
   });
 
   it('never double-allocates under concurrent receipts and numbers receipts uniquely', async () => {
     const { http, b } = await bookedFixture();
     const results = await Promise.all(
-      Array.from({ length: 8 }, () => http.post('/payments', { bookingId: b.id, amountPaise: 1_50_000_00, mode: 'upi', receivedOn: '2026-04-15' }, key())),
+      Array.from({ length: 8 }, () =>
+        http.post('/payments', { bookingId: b.id, amountPaise: 1_50_000_00, mode: 'upi', receivedOn: '2026-04-15' }, key()),
+      ),
     );
     const okCount = results.filter((r) => r.status === 201).length;
     // Concurrency conflicts are surfaced as retryable 422s, never as silent double counting.
@@ -73,8 +80,15 @@ describe('payments, allocation and receipts', () => {
 
   it('reverses a bounced receipt and restores installment balances', async () => {
     const { http, b } = await bookedFixture();
-    const p = (await http.post('/payments', { bookingId: b.id, amountPaise: 2_50_000_00, mode: 'cheque', receivedOn: '2026-04-10', reference: '000123' }, key())
-      .expect(201)).body.data;
+    const p = (
+      await http
+        .post(
+          '/payments',
+          { bookingId: b.id, amountPaise: 2_50_000_00, mode: 'cheque', receivedOn: '2026-04-10', reference: '000123' },
+          key(),
+        )
+        .expect(201)
+    ).body.data;
     await http.post(`/payments/${p.id}/reverse`, { reason: 'Cheque bounced' }).expect(200);
     await http.post(`/payments/${p.id}/reverse`, { reason: 'again' }).expect(422);
     const d = (await http.get(`/bookings/${b.id}`)).body.data;
@@ -88,7 +102,9 @@ describe('payments, allocation and receipts', () => {
 
   it('produces receipt PDFs and Excel exports', async () => {
     const { http, b, inv } = await bookedFixture();
-    const p = (await http.post('/payments', { bookingId: b.id, amountPaise: 1_000_00, mode: 'cash', receivedOn: '2026-04-10' }, key()).expect(201)).body.data;
+    const p = (
+      await http.post('/payments', { bookingId: b.id, amountPaise: 1_000_00, mode: 'cash', receivedOn: '2026-04-10' }, key()).expect(201)
+    ).body.data;
     const pdf = await http.get(`/payments/${p.id}/receipt.pdf`).expect(200);
     expect(pdf.headers['content-type']).toBe('application/pdf');
     const xlsx = await http.get(`/projects/${inv.project.id}/plots.xlsx`).expect(200);

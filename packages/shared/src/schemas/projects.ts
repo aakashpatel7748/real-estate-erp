@@ -78,7 +78,13 @@ export const plotUpdateSchema = plotSchema.partial();
 export const bulkPlotSchema = z.object({
   phaseId: optional(objectId),
   blockId: optional(objectId),
-  prefix: z.string().trim().toUpperCase().max(10).regex(/^[A-Z0-9-/]*$/).default(''),
+  prefix: z
+    .string()
+    .trim()
+    .toUpperCase()
+    .max(10)
+    .regex(/^[A-Z0-9-/]*$/)
+    .default(''),
   startNumber: z.number().int().min(1).max(99999),
   count: z.number().int().min(1).max(500),
   category: z.enum(PLOT_CATEGORIES).default('residential'),

@@ -29,7 +29,12 @@ export async function registerCompany(name = 'Acme Developers'): Promise<Session
   counter++;
   const res = await request(getApp())
     .post('/api/v1/auth/register')
-    .send({ name: `Owner ${counter}`, email: `owner${counter}.${randomUUID().slice(0, 6)}@example.com`, password: 'Str0ngPassw0rd!', companyName: name })
+    .send({
+      name: `Owner ${counter}`,
+      email: `owner${counter}.${randomUUID().slice(0, 6)}@example.com`,
+      password: 'Str0ngPassw0rd!',
+      companyName: name,
+    })
     .expect(201);
   return {
     token: res.body.data.accessToken,
@@ -72,8 +77,13 @@ export const key = () => randomUUID();
 export async function setupInventory(s: Session, count = 3, code = 'PRJ') {
   const http = api(s);
   const project = (await http.post('/projects', { name: `Project ${code}`, code, status: 'active' }).expect(201)).body.data;
-  await http.post(`/projects/${project.id}/plots/bulk`, { startNumber: 1, count, areaX100: 100_000, ratePaisePerSqft: 100_000 }).expect(201);
-  const plots = (await http.get(`/projects/${project.id}/plots?pageSize=100`).expect(200)).body.data as { id: string; plotNumber: string }[];
+  await http
+    .post(`/projects/${project.id}/plots/bulk`, { startNumber: 1, count, areaX100: 100_000, ratePaisePerSqft: 100_000 })
+    .expect(201);
+  const plots = (await http.get(`/projects/${project.id}/plots?pageSize=100`).expect(200)).body.data as {
+    id: string;
+    plotNumber: string;
+  }[];
   const plan = (
     await http
       .post('/payment-plans', {

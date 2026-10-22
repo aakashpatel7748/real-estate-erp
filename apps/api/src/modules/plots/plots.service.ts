@@ -76,9 +76,11 @@ export async function listPlots(ctx: TenantContext, projectId: string, q: PlotLi
   if (q.blockId) filter.blockId = toObjectId(q.blockId);
   if (q.category) filter.category = q.category;
   if (q.q) filter.plotNumber = new RegExp(escapeRegex(q.q.toUpperCase()));
-  const sort = parseSort(q.sort, ['plotNumber', 'areaX100', 'listPricePaise', 'status', 'createdAt', 'ratePaisePerSqft'], {
+  let sort = parseSort(q.sort, ['plotNumber', 'areaX100', 'listPricePaise', 'status', 'createdAt', 'ratePaisePerSqft'], {
     plotNumber: 1,
   });
+  // Plot numbers repeat across blocks, so order by block first (A-1, A-2 … B-1).
+  if (sort.plotNumber) sort = { blockId: sort.plotNumber, plotNumber: sort.plotNumber, _id: sort.plotNumber };
   const [items, total, blocks] = await Promise.all([
     Plot.find(filter)
       .collation({ locale: 'en', numericOrdering: true })

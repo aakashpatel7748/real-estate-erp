@@ -7,7 +7,11 @@ describe('bookings & plot inventory', () => {
     const inv = await setupInventory(s, 2);
     const http = api(s);
 
-    const res = await http.post('/bookings', bookingBody(inv, [0], { discountPaise: 50_000_00, charges: [{ name: 'Club', amountPaise: 25_000_00 }] }), key());
+    const res = await http.post(
+      '/bookings',
+      bookingBody(inv, [0], { discountPaise: 50_000_00, charges: [{ name: 'Club', amountPaise: 25_000_00 }] }),
+      key(),
+    );
     expect(res.status).toBe(201);
     const booking = (await http.get(`/bookings/${res.body.data.id}`).expect(200)).body.data;
 
@@ -17,7 +21,11 @@ describe('bookings & plot inventory', () => {
     expect(booking.bookingNumber).toMatch(/^BKG\/2026-27\/00001$/);
     const sum = booking.installments.reduce((a: number, i: { amountPaise: number }) => a + i.amountPaise, 0);
     expect(sum).toBe(booking.netAmountPaise);
-    expect(booking.installments.map((i: { dueDate: string }) => i.dueDate.slice(0, 10))).toEqual(['2026-04-10', '2026-05-10', '2026-07-10']);
+    expect(booking.installments.map((i: { dueDate: string }) => i.dueDate.slice(0, 10))).toEqual([
+      '2026-04-10',
+      '2026-05-10',
+      '2026-07-10',
+    ]);
 
     const plot = (await http.get(`/projects/${inv.project.id}/plots/${inv.plots[0]!.id}`).expect(200)).body.data;
     expect(plot.status).toBe('booked');
@@ -143,6 +151,9 @@ describe('bookings & plot inventory', () => {
     await http.post('/bookings', bookingBody(inv), key()).expect(201);
     const map = (await http.get(`/projects/${inv.project.id}/map`).expect(200)).body.data;
     expect(map.summary).toEqual({ booked: 1, available: 1 });
-    expect(map.plots.find((p: { id: string }) => p.id === inv.plots[0]!.id)).toMatchObject({ status: 'booked', points: '0,0 10,0 10,10 0,10' });
+    expect(map.plots.find((p: { id: string }) => p.id === inv.plots[0]!.id)).toMatchObject({
+      status: 'booked',
+      points: '0,0 10,0 10,10 0,10',
+    });
   });
 });

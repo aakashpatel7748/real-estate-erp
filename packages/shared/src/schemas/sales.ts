@@ -56,7 +56,12 @@ export const createBookingSchema = z.object({
   bookingDate: isoDate,
   /** 'reserve' holds the plot until expiry; 'book' confirms immediately. */
   mode: z.enum(['reserve', 'book']).default('book'),
-  reservationHours: z.number().int().min(1).max(24 * 30).optional(),
+  reservationHours: z
+    .number()
+    .int()
+    .min(1)
+    .max(24 * 30)
+    .optional(),
   discountPaise: paise.default(0),
   charges: z.array(bookingChargeSchema).max(10).default([]),
   remarks: trimmed(1000).optional(),

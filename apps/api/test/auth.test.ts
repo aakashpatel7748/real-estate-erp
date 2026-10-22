@@ -69,11 +69,7 @@ describe('authentication & sessions', () => {
   it('logout revokes the session and its access tokens', async () => {
     const s = await registerCompany();
     await api(s).get('/projects').expect(200);
-    await request(getApp())
-      .post('/api/v1/auth/logout')
-      .set('Cookie', s.cookies)
-      .set('x-csrf-token', s.csrf)
-      .expect(200);
+    await request(getApp()).post('/api/v1/auth/logout').set('Cookie', s.cookies).set('x-csrf-token', s.csrf).expect(200);
     await api(s).get('/projects').expect(401);
   });
 

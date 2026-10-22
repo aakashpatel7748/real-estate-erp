@@ -85,4 +85,14 @@ export const MEMBERSHIP_STATUSES = ['active', 'invited', 'disabled'] as const;
 export const LEAD_STATUSES = ['new', 'contacted', 'site_visit', 'negotiation', 'won', 'lost'] as const;
 export const LAND_STATUSES = ['negotiation', 'agreement', 'registered', 'converted', 'dropped'] as const;
 export const WORK_ORDER_STATUSES = ['draft', 'issued', 'in_progress', 'completed', 'cancelled'] as const;
-export const DOCUMENT_ENTITY_TYPES = ['project', 'land_parcel', 'plot', 'customer', 'booking', 'payment', 'vendor', 'work_order', 'company'] as const;
+export const DOCUMENT_ENTITY_TYPES = [
+  'project',
+  'land_parcel',
+  'plot',
+  'customer',
+  'booking',
+  'payment',
+  'vendor',
+  'work_order',
+  'company',
+] as const;

@@ -1,5 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import { allocateProportionally, applyBasisPoints, formatINR, formatINRCompact, priceForArea, rupeesToPaise, sqftToAreaX100 } from './money';
+import {
+  allocateProportionally,
+  applyBasisPoints,
+  formatINR,
+  formatINRCompact,
+  priceForArea,
+  rupeesToPaise,
+  sqftToAreaX100,
+} from './money';
 
 describe('money', () => {
   it('applies basis points with half-away-from-zero rounding', () => {

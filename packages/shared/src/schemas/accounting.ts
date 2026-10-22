@@ -25,7 +25,7 @@ export const journalLineSchema = z
     creditPaise: paise.default(0),
     narration: trimmed(200).optional(),
   })
-  .refine((l) => (l.debitPaise > 0) !== (l.creditPaise > 0), 'Each line needs either a debit or a credit');
+  .refine((l) => l.debitPaise > 0 !== l.creditPaise > 0, 'Each line needs either a debit or a credit');
 
 export const journalEntrySchema = z
   .object({
@@ -35,10 +35,10 @@ export const journalEntrySchema = z
     reference: trimmed(100).optional(),
     lines: z.array(journalLineSchema).min(2, 'At least two lines are required').max(50),
   })
-  .refine(
-    (e) => e.lines.reduce((s, l) => s + l.debitPaise, 0) === e.lines.reduce((s, l) => s + l.creditPaise, 0),
-    { message: 'Debits and credits must be equal', path: ['lines'] },
-  );
+  .refine((e) => e.lines.reduce((s, l) => s + l.debitPaise, 0) === e.lines.reduce((s, l) => s + l.creditPaise, 0), {
+    message: 'Debits and credits must be equal',
+    path: ['lines'],
+  });
 export type JournalEntryInput = z.infer<typeof journalEntrySchema>;
 
 export const reverseEntrySchema = z.object({

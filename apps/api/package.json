@@ -9,7 +9,8 @@
     "start": "node dist/server.js",
     "typecheck": "tsc -p tsconfig.json",
     "test": "vitest run",
-    "seed": "tsx --env-file-if-exists=../../.env src/scripts/seed.ts"
+    "seed": "tsx --env-file-if-exists=../../.env src/scripts/seed.ts",
+    "db:indexes": "tsx --env-file-if-exists=../../.env src/scripts/sync-indexes.ts"
   },
   "dependencies": {
     "@erp/shared": "*",

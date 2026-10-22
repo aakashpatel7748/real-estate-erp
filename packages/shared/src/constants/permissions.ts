@@ -32,8 +32,8 @@ export type Permission = {
   [K in keyof Groups]: `${K & string}.${Groups[K][number]}`;
 }[keyof Groups];
 
-export const ALL_PERMISSIONS: Permission[] = Object.entries(PERMISSION_GROUPS).flatMap(
-  ([group, actions]) => (actions as readonly string[]).map((a) => `${group}.${a}` as Permission),
+export const ALL_PERMISSIONS: Permission[] = Object.entries(PERMISSION_GROUPS).flatMap(([group, actions]) =>
+  (actions as readonly string[]).map((a) => `${group}.${a}` as Permission),
 );
 
 export const PERMISSION_LABELS: Record<string, string> = {

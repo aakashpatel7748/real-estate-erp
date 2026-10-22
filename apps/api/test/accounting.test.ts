@@ -103,8 +103,16 @@ describe('double-entry accounting', () => {
     const empty = (await http.get('/dashboard')).body.data;
     expect(empty.inventory.totalPlots).toBe(3);
     expect(empty.sales.fyCount).toBe(0);
-    const b = (await http.post('/bookings', bookingBody(inv, [0], { bookingDate: new Date().toISOString().slice(0, 10) }), key()).expect(201)).body.data;
-    await http.post('/payments', { bookingId: b.id, amountPaise: 1_00_000_00, mode: 'upi', receivedOn: new Date().toISOString().slice(0, 10) }, key()).expect(201);
+    const b = (
+      await http.post('/bookings', bookingBody(inv, [0], { bookingDate: new Date().toISOString().slice(0, 10) }), key()).expect(201)
+    ).body.data;
+    await http
+      .post(
+        '/payments',
+        { bookingId: b.id, amountPaise: 1_00_000_00, mode: 'upi', receivedOn: new Date().toISOString().slice(0, 10) },
+        key(),
+      )
+      .expect(201);
     const d = (await http.get('/dashboard')).body.data;
     expect(d.inventory.byStatus.booked.count).toBe(1);
     expect(d.sales.monthValuePaise).toBe(10_00_000_00);

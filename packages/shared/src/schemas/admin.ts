@@ -42,7 +42,12 @@ export const companyUpdateSchema = z.object({
   settings: z
     .object({
       overpaymentPolicy: z.enum(OVERPAYMENT_POLICIES).optional(),
-      reservationHoldHours: z.number().int().min(1).max(24 * 30).optional(),
+      reservationHoldHours: z
+        .number()
+        .int()
+        .min(1)
+        .max(24 * 30)
+        .optional(),
       receiptPrefix: z
         .string()
         .trim()

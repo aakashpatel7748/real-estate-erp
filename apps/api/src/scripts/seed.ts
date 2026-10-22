@@ -128,7 +128,8 @@ async function main() {
         const w = 80;
         const h = 150;
         const x = x0 + col * (w + 4);
-        const y = 60 + row * (h + (row === 1 ? 70 : 10));
+        // Two rows per side of the internal road between row 1 and row 2.
+        const y = 60 + row * (h + 10) + (row >= 2 ? 60 : 0);
         const corner = col === 0 || col === 5;
         const plot = await plots.createPlot(ctx, projectId, {
           blockId: idOf(block),

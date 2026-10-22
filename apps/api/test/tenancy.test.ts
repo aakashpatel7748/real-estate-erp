@@ -33,7 +33,13 @@ describe('tenant isolation & authorization', () => {
     const viewer = roles.find((r) => r.systemKey === 'viewer')!;
     const { testOutbox } = await import('../src/utils/mailer');
 
-    await http.post('/invitations', { email: 'viewer@example.com', roleId: viewer.id, projectAccess: { mode: 'restricted', projectIds: [inv1.project.id] } }).expect(201);
+    await http
+      .post('/invitations', {
+        email: 'viewer@example.com',
+        roleId: viewer.id,
+        projectAccess: { mode: 'restricted', projectIds: [inv1.project.id] },
+      })
+      .expect(201);
     const token = /token=([\w-]+)/.exec(testOutbox.filter((m) => m.to === 'viewer@example.com').at(-1)!.text)![1];
     const accepted = await request(getApp())
       .post('/api/v1/auth/accept-invite')

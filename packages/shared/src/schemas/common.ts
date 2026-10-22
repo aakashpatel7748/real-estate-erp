@@ -24,7 +24,10 @@ export const gstin = z
   .trim()
   .toUpperCase()
   .regex(/^[0-9]{2}[A-Z0-9]{10}[0-9A-Z]Z[0-9A-Z]$/, 'Enter a valid GSTIN');
-export const pincode = z.string().trim().regex(/^[1-9][0-9]{5}$/, 'Enter a 6-digit PIN code');
+export const pincode = z
+  .string()
+  .trim()
+  .regex(/^[1-9][0-9]{5}$/, 'Enter a 6-digit PIN code');
 
 export const optional = <T extends z.ZodTypeAny>(schema: T) =>
   z.preprocess((v) => (v === '' || v === null ? undefined : v), schema.optional());
