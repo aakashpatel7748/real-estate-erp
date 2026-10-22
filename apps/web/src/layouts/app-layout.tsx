@@ -16,6 +16,8 @@ import {
   Map,
   Menu,
   Moon,
+  PanelLeftClose,
+  PanelLeftOpen,
   ReceiptIndianRupee,
   ScrollText,
   Search,
@@ -108,7 +110,7 @@ function writePref(key: string, value: string) {
 function Sidebar({ collapsed, onNavigate }: { collapsed: boolean; onNavigate?: () => void }) {
   const { can } = useAuth();
   return (
-    <nav aria-label="Main" className="flex-1 overflow-y-auto px-3 py-4">
+    <nav aria-label="Main" className="flex-1 overflow-y-auto no-scrollbar overscroll-contain px-3 py-4">
       {NAV.map((group) => {
         const items = group.items.filter((i) => can(i.permission));
         if (!items.length) return null;
@@ -439,7 +441,7 @@ export function AppLayout() {
   };
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex h-screen overflow-hidden">
       <a
         href="#main"
         className="sr-only focus:not-sr-only focus:fixed focus:left-2 focus:top-2 focus:z-50 focus:rounded focus:bg-card focus:px-3 focus:py-2"
@@ -449,7 +451,7 @@ export function AppLayout() {
       {/* Desktop sidebar */}
       <aside
         className={cn(
-          'sticky top-0 hidden h-screen shrink-0 flex-col border-r border-sidebar-border bg-sidebar transition-[width] duration-200 md:flex',
+          'hidden h-full shrink-0 flex-col border-r border-sidebar-border bg-sidebar transition-[width] duration-200 md:flex',
           collapsed ? 'w-16' : 'w-64',
         )}
       >
@@ -473,15 +475,6 @@ export function AppLayout() {
           </div>
         )}
         <Sidebar collapsed={collapsed} />
-        <button
-          type="button"
-          onClick={toggleCollapsed}
-          className="flex h-11 items-center justify-center gap-2 border-t border-sidebar-border text-sm text-sidebar-muted hover:text-white cursor-pointer"
-          aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-        >
-          {collapsed ? <ChevronsRight className="size-4" /> : <ChevronsLeft className="size-4" />}
-          {!collapsed && 'Collapse'}
-        </button>
       </aside>
 
       {/* Mobile drawer */}
@@ -500,10 +493,20 @@ export function AppLayout() {
         </div>
       )}
 
-      <div className="flex min-w-0 flex-1 flex-col">
+      <div className="flex min-w-0 flex-1 flex-col h-full overflow-y-auto">
         <header className="sticky top-0 z-30 flex h-14 items-center gap-3 border-b bg-card/95 px-4 backdrop-blur supports-[backdrop-filter]:bg-card/80">
           <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setMobileOpen(true)} aria-label="Open navigation">
             <Menu />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="hidden md:flex cursor-pointer text-muted-foreground hover:text-foreground"
+            onClick={toggleCollapsed}
+            aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          >
+            {collapsed ? <PanelLeftOpen className="size-5" /> : <PanelLeftClose className="size-5" />}
           </Button>
           <GlobalSearch />
           <div className="ml-auto flex items-center gap-2">
